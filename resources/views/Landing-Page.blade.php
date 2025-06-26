@@ -324,7 +324,7 @@
             </div>
         </section>
 
-        <section id="gallery" class="bg-gray-50 py-20 lg:py-24">
+        <section id="gallery" class="bg-white py-20 lg:py-24">
             <div class="container mx-auto px-6">                
                 <div class="text-center max-w-3xl mx-auto mb-16">
                     <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
