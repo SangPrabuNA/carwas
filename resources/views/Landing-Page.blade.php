@@ -35,8 +35,8 @@
 
             <div class="hidden md:flex items-center">
                 <div class="flex items-center bg-gray-800 rounded-md p-1">
-                    <a href="#" class="py-1 px-4 text-sm font-semibold bg-white text-gray-900 rounded-md">Register</a>
-                    <a href="#" class="py-1 px-4 text-sm font-semibold text-white hover:bg-gray-700 rounded-md transition-colors">Login</a>
+                    <a href="/register" class="py-1 px-4 text-sm font-semibold bg-white text-gray-900 rounded-md">Register</a>
+                    <a href="/login" class="py-1 px-4 text-sm font-semibold text-white hover:bg-gray-700 rounded-md transition-colors">Login</a>
                 </div>
             </div>
 
