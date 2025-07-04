@@ -23,14 +23,14 @@
     <header class="bg-black">
         <nav class="container mx-auto px-6 py-3 relative flex justify-between items-center">
             <div class="flex-shrink-0">
-                <a href="#" class="text-3xl font-bold text-white uppercase tracking-wider">
-                    <img src="{{ asset('LOGO.png') }}" alt="CarWash Logo" class="h-12 w-auto">
+                <a href="{{ url('/') }}">
+                    <img src="{{ asset('LOGO.png') }}" alt="CarWash Logo" class="h-10 w-auto">
                 </a>
             </div>
 
-            <div class="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center bg-gray-800 rounded-md p-1">
-                <a href="#" class="py-1 px-4 text-sm font-semibold bg-white text-gray-900 rounded-md">Home</a>
-                <a href="#booking" class="py-1 px-4 text-sm font-semibold text-white hover:bg-gray-700 rounded-md transition-colors">Booking</a>
+            <div class="hidden md:flex items-center space-x-1 bg-slate-800/50 backdrop-blur-sm p-1 rounded-full">
+                <a href="{{ url('/') }}" class="text-gray-900 bg-white rounded-full font-semibold py-1.5 px-5 transition-colors">Home</a>
+                <a href="{{ route('booking.create') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5 transition-colors">Booking</a>
             </div>
 
             <div class="hidden md:flex items-center">
