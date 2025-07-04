@@ -1,12 +1,12 @@
 <?php
-namespace App\Http\Controllers\Bookings;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
-use Illuminate\View\View; // <-- Tambahkan ini
+use Illuminate\View\View; 
 
-class Booking extends Controller
+class BookingController extends Controller
 {
     /**
      * Menampilkan halaman untuk membuat booking baru (front-end).
