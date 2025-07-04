@@ -20,9 +20,6 @@ class AuthController extends Controller
         return back()->with('success', 'Registration successful! (Placeholder)');
     }
 
-
-    // ▼▼▼ TAMBAHKAN DUA METHOD BARU DI BAWAH INI ▼▼▼
-
     /**
      * Menampilkan halaman form login.
      */
