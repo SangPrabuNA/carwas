@@ -22,7 +22,8 @@ class BookingController extends Controller
         $dummyServices = [
             ['id' => 1, 'name' => 'Packet 1', 'price' => 99000, 'duration' => 1],
             ['id' => 2, 'name' => 'Packet 2', 'price' => 499000, 'duration' => 2],
-            ['id' => 3, 'name' => 'Complete', 'price' => 799000, 'duration' => 3],
+            ['id' => 3, 'name' => 'Packet 3', 'price' => 799000, 'duration' => 3], // <-- INI YANG DITAMBAHKAN
+            ['id' => 4, 'name' => 'Complete', 'price' => 4999000, 'duration' => 5], // Harga disesuaikan
         ];
 
         return view('booking.create', [
