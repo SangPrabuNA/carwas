@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
-use Illuminate\View\View; 
+use Illuminate\View\View;
+use App\Models\Service; 
+use App\Models\Car; 
 
 class BookingController extends Controller
 {
@@ -13,26 +15,23 @@ class BookingController extends Controller
      */
     public function create(Request $request): View
     {
-        // Data dummy untuk mobil dan service
-        $dummyCars = [
-            ['id' => 1, 'name' => 'DK 2801 FKD (BMW M4)'],
-            ['id' => 2, 'name' => 'B 1234 ABC (Lamborghini)'],
-        ];
+        $user = $request->user();
+        $cars = []; // Siapkan variabel cars sebagai array kosong
 
-        $dummyServices = [
-            ['id' => 1, 'name' => 'Packet 1', 'price' => 99000, 'duration' => 1],
-            ['id' => 2, 'name' => 'Packet 2', 'price' => 499000, 'duration' => 2],
-            ['id' => 3, 'name' => 'Packet 3', 'price' => 799000, 'duration' => 3], // <-- INI YANG DITAMBAHKAN
-            ['id' => 4, 'name' => 'Complete', 'price' => 4999000, 'duration' => 5], // Harga disesuaikan
-        ];
+        // HANYA JIKA ADA USER YANG LOGIN, kita ambil data mobilnya
+        if ($user) {
+            $cars = $user->cars()->get();
+        }
+
+        // Ambil semua data service dari database
+        $services = Service::all();
 
         return view('booking.create', [
-            'user' => $request->user(),
-            'cars' => $dummyCars,
-            'services' => $dummyServices,
+            'user' => $user,
+            'cars' => $cars,
+            'services' => $services,
         ]);
     }
-
     // Menampilkan semua jadwal (method Anda sebelumnya)
     public function index()
     {

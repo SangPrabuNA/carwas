@@ -3,44 +3,52 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\View\View; // <-- Pastikan 'use' statement ini ditambahkan
+use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    /**
-     * Menampilkan form edit profil dengan data dummy.
-     */
-    public function edit(): View // <-- INI METHOD YANG HILANG
+    public function edit(Request $request): View
     {
-        // Membuat data user palsu (dummy)
-        $dummyUser = (object) [
-            'name' => 'Ananta',
-            'email' => 'anantadummy@gmail.com',
-            'phone' => '+6281234567890',
-            'address' => 'Jl. Dummy Profile No. 123',
-        ];
-
-        // Membuat data mobil palsu (dummy)
-        $dummyCars = [
-            (object) [
-                'image' => 'https://images.unsplash.com/photo-1616422285421-9BC2b0a1f934?q=80&w=300',
-                'plate_number' => 'DK 2801 FKD',
-                'brand' => 'BMW',
-                'model' => 'M4',
-            ],
-            (object) [
-                'image' => 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=300',
-                'plate_number' => 'B 1234 ABC',
-                'brand' => 'Lamborghini',
-                'model' => 'Aventador',
-            ],
-        ];
+        // Ambil user yang login, dan muat relasi 'cars'-nya secara eksplisit
+        $user = $request->user()->load('cars');
 
         return view('profile.edit', [
-            'user' => $dummyUser,
-            'cars' => $dummyCars,
+            'user' => $user,
         ]);
     }
 
-    // Nanti kita bisa tambahkan fungsi lain seperti update() di sini
+    /**
+     * Method baru untuk meng-update profil pengguna.
+     */
+    public function update(Request $request)
+    {
+        // 1. Ambil data pengguna yang sedang login
+        $user = $request->user();
+
+        // 2. Validasi data yang masuk dari form
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
+            'password' => ['nullable', 'confirmed', Password::min(8)],
+        ]);
+
+        // 3. Update data pengguna
+        $user->name = $validated['name'];
+        $user->phone = $validated['phone'];
+        $user->address = $validated['address'];
+
+        // 4. Hanya update password jika diisi
+        if ($request->filled('password')) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        // 5. Simpan perubahan ke database
+        $user->save();
+
+        // 6. Kembali ke halaman profil dengan pesan sukses
+        return redirect()->route('profile.edit')->with('status', 'Profile successfully updated!');
+    }
 }

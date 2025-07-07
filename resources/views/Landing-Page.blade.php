@@ -34,10 +34,22 @@
             </div>
 
             <div class="hidden md:flex items-center">
-                <div class="flex items-center bg-gray-800 rounded-md p-1">
-                    <a href="/register" class="py-1 px-4 text-sm font-semibold bg-white text-gray-900 rounded-md">Register</a>
-                    <a href="/login" class="py-1 px-4 text-sm font-semibold text-white hover:bg-gray-700 rounded-md transition-colors">Login</a>
-                </div>
+                @auth
+                    <div class="flex items-center space-x-3 text-white">
+                        <a href="{{ route('profile.edit') }}" class="font-semibold">{{ Auth::user()->name }}</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" title="Logout">
+                                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H3" /></svg>
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="flex items-center bg-gray-800 rounded-md p-1">
+                        <a href="{{ route('register') }}" class="py-1 px-4 text-sm font-semibold bg-white text-gray-900 rounded-md">Register</a>
+                        <a href="{{ route('login') }}" class="py-1 px-4 text-sm font-semibold text-white hover:bg-gray-700 rounded-md transition-colors">Login</a>
+                    </div>
+                @endguest
             </div>
 
             <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">

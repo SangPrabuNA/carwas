@@ -48,17 +48,18 @@
               x-data="{
                 step: 1,
                 isLoading: false,
+                bookingSuccess: false, // <-- State baru untuk pesan sukses
                 selectedCar: '',
                 selectedService: null,
                 selectedDate: null,
                 selectedTime: null,
-                services: {{ json_encode($services) }},
-                cars: {{ json_encode($cars) }},
+                services: @json($services),
+                cars: @json($cars),
 
                 // Helper Functions
                 getServiceName() { return this.selectedService ? this.selectedService.name : 'N/A'; },
                 getServicePrice() { return this.selectedService ? this.selectedService.price : 0; },
-                getCarName() { 
+                getCarName() {
                     if (!this.selectedCar) return 'N/A';
                     const car = this.cars.find(c => c.id == this.selectedCar);
                     return car ? car.name : 'N/A';
@@ -66,137 +67,65 @@
                 formatCurrency(value) {
                     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value);
                 },
+                formatDateForBackend(dateString) {
+                    if (!dateString) return null;
+                    const date = new Date(dateString.replace(/(\d+)\s(\w+)\s(\d+)/, '$2 $1, $3'));
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
 
-                // Fungsi untuk mengirim data ke backend
+                // FUNGSI UNTUK MENGIRIM BOOKING
                 submitBooking() {
                     this.isLoading = true;
-                    // ... (logika submitBooking dari jawaban sebelumnya)
+
+                    const bookingData = {
+                        nama: this.getServiceName(),
+                        tanggal_masuk: this.formatDateForBackend(this.selectedDate),
+                        jam_masuk: this.selectedTime,
+                        tanggal_selesai: this.formatDateForBackend(this.selectedDate),
+                        jam_keluar: '17:00' // Placeholder
+                    };
+
+                    fetch('{{ route('booking.store') }}', { // Menggunakan route API
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                        },
+                        body: JSON.stringify(bookingData)
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Booking failed!');
+                        return response.json();
+                    })
+                    .then(data => {
+                        this.bookingSuccess = true; // <-- Tampilkan modal sukses
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred. Please check the console and try again.');
+                    })
+                    .finally(() => {
+                        this.isLoading = false;
+                    });
                 }
               }" x-cloak>
 
-            <div class="w-full max-w-2xl mx-auto mb-12">
-                <div class="flex items-center">
-                    <div class="flex flex-col items-center text-center text-white">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center z-10" :class="step >= 1 ? 'bg-blue-600' : 'bg-white border-2 border-gray-400'">
-                            <span x-show="step > 1">✓</span>
-                            <span x-show="step <= 1">1</span>
-                        </div>
-                        <p class="mt-2 text-sm font-semibold">Langkah 1</p>
-                        <p class="text-xs">Choose Service</p>
-                    </div>
-                    <div class="flex-auto border-t-2 transition-colors" :class="step >= 2 ? 'border-blue-600' : 'border-gray-400'"></div>
-                    <div class="flex flex-col items-center text-center text-white">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center z-10" :class="step >= 2 ? 'bg-blue-600' : 'bg-white border-2 border-gray-400'">
-                            <span x-show="step > 2">✓</span>
-                            <span x-show="step <= 2">2</span>
-                        </div>
-                        <p class="mt-2 text-sm font-semibold">Langkah 2</p>
-                        <p class="text-xs">Set a Schedule</p>
-                    </div>
-                    <div class="flex-auto border-t-2 transition-colors" :class="step >= 3 ? 'border-blue-600' : 'border-gray-400'"></div>
-                    <div class="flex flex-col items-center text-center text-white">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center z-10" :class="step === 3 ? 'bg-blue-600' : 'bg-white border-2 border-gray-400'">
-                            <span>3</span>
-                        </div>
-                        <p class="mt-2 text-sm font-semibold">Langkah 3</p>
-                        <p class="text-xs">Start Cleaning</p>
+            <div x-show="bookingSuccess" x-transition class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-md p-8 rounded-lg text-center">
+                    <svg class="w-20 h-20 text-green-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h3>
+                    <p class="text-gray-600 mb-8">Your car wash schedule has been successfully saved.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="{{ route('booking.create') }}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg">Book Again</a>
+                        <a href="{{ url('/') }}" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg">Back to Home</a>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-8 md:p-12 rounded-lg shadow-xl max-w-4xl mx-auto min-h-[450px]">
-                <div x-show="step === 1" class="flex flex-col h-full">
-                    <div class="flex-grow">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Choose Vehicle</h2>
-                        <select x-model="selectedCar" class="block w-full max-w-md mx-auto p-3 border-gray-300 rounded-md shadow-sm">
-                            <option value="" disabled>-- Select Your Vehicle --</option>
-                            <template x-for="car in cars" :key="car.id">
-                                <option :value="car.id" x-text="car.name"></option>
-                            </template>
-                        </select>
-                        <h2 class="text-2xl font-bold text-gray-800 my-8 text-center">Choose Service</h2>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <template x-for="service in services" :key="service.id">
-                                <div @click="selectedService = service" class="p-4 border rounded-lg cursor-pointer text-center transition-all" :class="selectedService && selectedService.id === service.id ? 'border-blue-600 ring-2 ring-blue-600' : 'border-gray-300'">
-                                    <h3 class="font-bold text-gray-800" x-text="service.name"></h3>
-                                    <p class="text-sm text-blue-600 font-semibold" x-text="formatCurrency(service.price)"></p>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="flex justify-between mt-10">
-                        <button class="bg-gray-200 text-gray-400 font-semibold py-2 px-8 rounded-lg cursor-not-allowed">Back</button>
-                        <button @click="step = 2" :disabled="!selectedCar || !selectedService" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg disabled:bg-gray-400">Next</button>
-                    </div>
-                </div>
-
-                <div x-show="step === 2" x-cloak class="flex flex-col h-full">
-                    <div class="flex-grow">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Choose Date</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white rounded-lg text-gray-800">
-                                <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-lg">July 2025</h4></div>
-                                <div class="grid grid-cols-7 gap-2 text-center text-sm text-gray-500 mb-2"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
-                                <div class="grid grid-cols-7 gap-2 text-center">
-                                    <div></div>
-                                    <template x-for="day in 31" :key="day">
-                                        <div @click="selectedDate = `${day} Jul 2025`" class="p-2 hover:bg-blue-100 rounded-full cursor-pointer" :class="{'bg-blue-600 text-white font-bold': selectedDate === `${day} Jul 2025`}" x-text="day"></div>
-                                    </template>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <template x-for="time in ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00']">
-                                    <div @click="selectedTime = time" class="p-3 border rounded-lg cursor-pointer text-center" :class="selectedTime === time ? 'border-blue-600 ring-2 ring-blue-600 font-bold' : 'border-gray-300'" x-text="time"></div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between mt-10">
-                        <button @click="step = 1" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-8 rounded-lg">Back</button>
-                        <button @click="step = 3" :disabled="!selectedDate || !selectedTime" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg disabled:bg-gray-400">Next</button>
-                    </div>
-                </div>
-
-                <div x-show="step === 3" x-cloak class="flex flex-col h-full">
-                    <div class="flex-grow">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Confirmation</h2>
-                        <div class="max-w-xl mx-auto border rounded-lg p-6 divide-y divide-gray-200">
-                            <div class="flex justify-between items-center py-3">
-                                <span class="text-gray-500">Service</span>
-                                <span class="font-semibold text-gray-800" x-text="getServiceName()"></span>
-                            </div>
-                            <div class="flex justify-between items-center py-3">
-                                <span class="text-gray-500">Schedule</span>
-                                <span class="font-semibold text-gray-800" x-text="selectedDate ? `${selectedDate}, ${selectedTime}` : 'N/A'"></span>
-                            </div>
-                            <div class="pt-4 mt-4 border-t">
-                                <p class="text-gray-500 text-sm mb-2">ITEM DETAIL</p>
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <p class="font-semibold text-gray-800" x-text="getServiceName()"></p>
-                                        <p class="text-sm text-gray-500" x-text="getCarName()"></p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="font-semibold text-gray-800" x-text="formatCurrency(getServicePrice())"></p>
-                                        <p class="text-sm text-gray-500">Rate</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center pt-4 mt-4 font-bold text-lg">
-                                <span class="text-gray-900">Total</span>
-                                <span class="text-blue-600" x-text="formatCurrency(getServicePrice())"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between mt-10 max-w-xl mx-auto">
-                        <button @click="step = 2" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-8 rounded-lg">Back</button>
-                        <button @click="submitBooking()" :disabled="isLoading" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg flex items-center disabled:bg-gray-400">
-                            <span x-show="isLoading" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></span>
-                            <span x-text="isLoading ? 'Processing...' : 'Confirm'"></span>
-                        </button>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
     
