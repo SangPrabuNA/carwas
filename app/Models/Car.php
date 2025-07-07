@@ -29,4 +29,9 @@ class Car extends Model
             get: fn () => $this->plate_number . ' (' . $this->brand . ' ' . $this->model . ')',
         );
     }
+
+    public function schedules() 
+    { 
+        return $this->hasMany(Schedule::class); 
+    }
 }

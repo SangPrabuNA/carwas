@@ -81,11 +81,10 @@
                 submitBooking() {
                     this.isLoading = true;
                     const bookingData = {
-                        nama: this.getServiceName(),
+                        car_id: this.selectedCar, // Kirim car_id
+                        service_id: this.selectedService.id, // Kirim service_id
                         tanggal_masuk: this.formatDateForBackend(this.selectedDate),
                         jam_masuk: this.selectedTime,
-                        tanggal_selesai: this.formatDateForBackend(this.selectedDate),
-                        jam_keluar: '17:00'
                     };
 
                     fetch('{{ route('booking.store') }}', {

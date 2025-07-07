@@ -30,7 +30,7 @@
 
             <div class="hidden md:flex items-center space-x-1 bg-slate-800/50 backdrop-blur-sm p-1 rounded-full">
                 <a href="{{ url('/') }}" class="text-gray-900 bg-white rounded-full font-semibold py-1.5 px-5 transition-colors">Home</a>
-                <a href="{{ route('booking.create') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5 transition-colors">Booking</a>
+                <a href="{{ route('booking.step1.create') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5 transition-colors">Booking</a>
             </div>
 
             <div class="hidden md:flex items-center">
@@ -61,7 +61,7 @@
     
         <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-t border-gray-700">
             <a href="#" class="block py-3 px-6 text-white font-semibold hover:bg-gray-800">Home</a>
-            <a href="#booking" class="block py-3 px-6 text-white hover:bg-gray-800">Booking</a>
+            <a href="{{ route('booking.step1.create') }}" class="block py-3 px-6 text-white hover:bg-gray-800">Booking</a>
             <a href="#" class="block py-3 px-6 text-white hover:bg-gray-800 border-t border-gray-700 mt-2 pt-4">Register</a>
             <a href="#" class="block py-3 px-6 text-white hover:bg-gray-800">Login</a>
         </div>
@@ -74,7 +74,7 @@
                 <div class="md:w-1/2">
                     <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">CarWash Where Your Car's Shine Takes Flight</h1>
                     <p class="text-lg md:text-xl text-gray-300 mb-8">Premium cleaning and hygiene with our jet wash company. Your car deserves the best treatment.</p>
-                    <a href="#booking" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
+                    <a href="{{ route('booking.step1.create') }}" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-8 rounded-lg text-lg transition-colors">
                         book now
                     </a>
                 </div>
@@ -158,50 +158,17 @@
                     </p>
                 </div>
 
-                <div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        <div class="text-left group">
-                            <div class="overflow-hidden rounded-lg">
-                                <img src="{{ asset('paket1.png') }}" alt="Paket Cuci Mobil Biasa" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                            </div>
-                            <div class="pt-5">
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Packet 1 (99K/ 1 Jam)</h3>
-                                <p class="text-gray-500">Cuci mobil biasa</p>
-                            </div>
-                        </div>
-
-                        <div class="text-left group">
-                            <div class="overflow-hidden rounded-lg">
-                                <img src="{{ asset('paket2.png') }}" alt="Paket Cuci Mobil dan Detailing Body" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                            </div>
-                            <div class="pt-5">
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Packet 2 (499K/ 2 Jam)</h3>
-                                <p class="text-gray-500">Cuci mobil + detailing body</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    @foreach ($services as $service)
+                        <div class="bg-gray-800 rounded-lg overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                            <img src="{{ $service->image ? asset('storage/' . $service->image) : 'https://via.placeholder.com/400x300.png?text=No+Image' }}" alt="{{ $service->name }}" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <h3 class="font-bold text-xl mb-2">{{ $service->name }}</h3>
+                                <p class="text-gray-400">{{ $service->description }}</p>
+                                <p class="text-cyan-400 font-bold mt-2">Rp {{ number_format($service->price, 0, ',', '.') }}</p>
                             </div>
                         </div>
-
-                        <div class="text-left group">
-                            <div class="overflow-hidden rounded-lg">
-                                <img src="{{ asset('paket3.png') }}" alt="Paket Cuci Mobil, Detailing Body dan Interior" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                            </div>
-                            <div class="pt-5">
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Packet 3 (799K/ 3 Jam)</h3>
-                                <p class="text-gray-500">Cuci Mobil + Detailing Body dan Interior</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-16 flex justify-center">
-                        <div class="text-left group lg:w-2/5 md:w-3/5">
-                            <div class="overflow-hidden rounded-lg">
-                                <img src="{{ asset('paketcomplete.png') }}" alt="Paket Lengkap CarWash" class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
-                            </div>
-                            <div class="pt-5">
-                                <h3 class="text-xl font-bold text-gray-800 mb-1">Complete Packet (4999K/ 5 Jam)</h3>
-                                <p class="text-gray-500">Faucibus in ornare quam viverra orci sagittis. Lectus sit amet est placerat in. Quis commodo odio aenean sed.</p>
-                            </div>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
             </div>
         </section>
@@ -247,7 +214,7 @@
                         <p class="text-gray-300 leading-relaxed">
                             Id et diam diam sem donec. Duis id feugiat tempus, leo ut ac amet cras. Ac sapien enim platea mauris. Vel non aliquam mattis aliquet fames mauris. Libero gravida dictum mi, maecenas convallis.
                         </p>
-                        <a href="#" class="inline-flex items-center mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg shadow-cyan-500/30">
+                        <a href="{{ route('booking.step1.create') }}" class="inline-flex items-center mt-8 bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg shadow-cyan-500/30">
                             Book Now
                             <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
                         </a>

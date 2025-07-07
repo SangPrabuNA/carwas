@@ -9,8 +9,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Ambil data booking untuk ditampilkan
-        $bookings = Schedule::latest()->get(); // Ambil data booking dari model Schedule
+        // Ambil data booking dan muat relasi user, car, dan service
+        $bookings = Schedule::with(['user', 'car', 'service'])->latest()->get();
 
         return view('admin.dashboard', ['bookings' => $bookings]);
     }

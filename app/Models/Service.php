@@ -11,7 +11,13 @@ class Service extends Model
 
     protected $fillable = [
         'name',
+        'description',
         'price',
         'duration',
+        'image',
     ];
+    public function schedules() 
+    { 
+        return $this->hasMany(Schedule::class); 
+    }
 }

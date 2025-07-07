@@ -7,8 +7,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CarController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\WorkerController;
+use App\Http\Controllers\MultiStepBookingController;
 
-// Semua route untuk website harus ada di dalam grup ini
+
 Route::middleware('web')->group(function () {
 
     // Route untuk Halaman Utama
@@ -30,13 +34,22 @@ Route::middleware('web')->group(function () {
     Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit')->middleware('auth');
     Route::patch('/cars/{car}', [CarController::class, 'update'])->name('cars.update')->middleware('auth'); 
 
-    // Route untuk Booking (Dilindungi Auth)
-    Route::get('/booking/create', [BookingController::class, 'create'])->name('booking.create')->middleware('auth');
-    Route::post('/booking', [BookingController::class, 'store'])->name('booking.store')->middleware('auth');
+    Route::get('/booking/step-1', [MultiStepBookingController::class, 'createStep1'])->name('booking.step1.create')->middleware('auth');
+    Route::post('/booking/step-1', [MultiStepBookingController::class, 'storeStep1'])->name('booking.step1.store')->middleware('auth');
+    Route::get('/booking/step-2', [MultiStepBookingController::class, 'createStep2'])->name('booking.step2.create')->middleware('auth');
+    Route::post('/booking/step-2', [MultiStepBookingController::class, 'storeStep2'])->name('booking.step2.store')->middleware('auth');
+    Route::get('/booking/step-3', [MultiStepBookingController::class, 'createStep3'])->name('booking.step3.create')->middleware('auth');
+    Route::post('/booking/step-3', [MultiStepBookingController::class, 'storeStep3'])->name('booking.step3.store')->middleware('auth');
 
     // Grup Route untuk Admin
-    Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        // Nanti kita tambahkan route lain di sini
+    Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        Route::get('/customers/{user}', [CustomerController::class, 'show'])->name('customers.show');
+        Route::delete('/customers/{user}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+        Route::get('/customers', [CustomerController::class, 'index'])->name('customers.index');
+        
+        Route::resource('services', ServiceController::class);
+        Route::resource('workers', WorkerController::class);
     });
 });

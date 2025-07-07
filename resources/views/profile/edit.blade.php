@@ -28,7 +28,7 @@
                 <a href="{{ url('/') }}"><img src="{{ asset('LOGO.png') }}" alt="CarWash Logo" class="h-10 w-auto"></a>
                 <div class="hidden md:flex items-center space-x-1 bg-slate-800/50 backdrop-blur-sm p-1 rounded-full">
                     <a href="{{ url('/') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5">Home</a>
-                    <a href="{{ route('booking.create') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5">Booking</a>
+                    <a href="{{ route('booking.step1.create') }}" class="text-white hover:bg-white/10 rounded-full font-semibold py-1.5 px-5">Booking</a>
                 </div>
                 <div class="flex items-center space-x-4 text-white">
                     @auth

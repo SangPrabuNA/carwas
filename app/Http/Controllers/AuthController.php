@@ -65,7 +65,14 @@ class AuthController extends Controller
         // 2. Coba lakukan otentikasi
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // 3. Jika berhasil, arahkan ke halaman profil
+
+            // 3. PERIKSA ROLE SETELAH LOGIN BERHASIL
+            if (Auth::user()->role == 'admin') {
+                // Jika rolenya admin, arahkan ke dashboard admin
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
+            // Jika bukan admin (user biasa), arahkan ke halaman profil
             return redirect()->intended(route('profile.edit'));
         }
 
