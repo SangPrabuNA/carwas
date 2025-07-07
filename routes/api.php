@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// routes/api.php
-use App\Http\Controllers\BookingController; // Sesuaikan jika perlu
+use App\Http\Controllers\BookingController;
 
-Route::post('/schedules', [BookingController::class, 'store'])->name('booking.store')->middleware('auth');
+//Route::post('/schedules', [BookingController::class, 'store'])->name('booking.store')->middleware('auth');

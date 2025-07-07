@@ -42,16 +42,29 @@ class BookingController extends Controller
     // Menyimpan jadwal baru (method Anda sebelumnya)
     public function store(Request $request)
     {
+        // Validasi data dari form
         $validated = $request->validate([
             'nama' => 'required|string',
             'tanggal_masuk' => 'required|date',
             'jam_masuk' => 'required',
-            'tanggal_selesai' => 'required|date',
-            'jam_keluar' => 'required',
         ]);
 
-        $schedule = Schedule::create($validated);
+        // Buat data schedule baru
+        // Kita asumsikan user yang membuat adalah user yang sedang login
+        // dan mobil yang dipilih juga ada di data request (jika diperlukan)
+        $schedule = new Schedule();
+        $schedule->nama = $validated['nama'];
+        $schedule->tanggal_masuk = $validated['tanggal_masuk'];
+        $schedule->jam_masuk = $validated['jam_masuk'];
+        // Placeholder untuk tanggal dan jam selesai
+        $schedule->tanggal_selesai = $validated['tanggal_masuk']; 
+        $schedule->jam_keluar = '17:00'; 
+        $schedule->save();
 
-        return response()->json($schedule, 201);
-    }
+        // Redirect kembali ke halaman profil dengan pesan sukses
+        // return redirect()->route('profile.edit')->with('status', 'Booking schedule created successfully!');
+
+        // Untuk sekarang, kita kembalikan response JSON agar bisa ditangani Alpine.js
+        return response()->json(['message' => 'Booking schedule created successfully!'], 201);
+    }                                                       
 }

@@ -48,17 +48,19 @@
               x-data="{
                 step: 1,
                 isLoading: false,
-                bookingSuccess: false, // <-- State baru untuk pesan sukses
+                bookingSuccess: false,
                 selectedCar: '',
                 selectedService: null,
                 selectedDate: null,
                 selectedTime: null,
-                services: @json($services),
-                cars: @json($cars),
-
-                // Helper Functions
-                getServiceName() { return this.selectedService ? this.selectedService.name : 'N/A'; },
-                getServicePrice() { return this.selectedService ? this.selectedService.price : 0; },
+                services: @json($services ?? []),
+                cars: @json($cars ?? []), 
+                getServiceName() { 
+                    return this.selectedService ? this.selectedService.name : 'N/A'; 
+                },
+                getServicePrice() { 
+                    return this.selectedService ? this.selectedService.price : 0; 
+                },
                 getCarName() {
                     if (!this.selectedCar) return 'N/A';
                     const car = this.cars.find(c => c.id == this.selectedCar);
@@ -76,19 +78,17 @@
                     return `${year}-${month}-${day}`;
                 },
 
-                // FUNGSI UNTUK MENGIRIM BOOKING
                 submitBooking() {
                     this.isLoading = true;
-
                     const bookingData = {
                         nama: this.getServiceName(),
                         tanggal_masuk: this.formatDateForBackend(this.selectedDate),
                         jam_masuk: this.selectedTime,
                         tanggal_selesai: this.formatDateForBackend(this.selectedDate),
-                        jam_keluar: '17:00' // Placeholder
+                        jam_keluar: '17:00'
                     };
 
-                    fetch('{{ route('booking.store') }}', { // Menggunakan route API
+                    fetch('{{ route('booking.store') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -96,17 +96,18 @@
                             'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
                         },
                         body: JSON.stringify(bookingData)
-                    })
+                    }),
                     .then(response => {
-                        if (!response.ok) throw new Error('Booking failed!');
+                        if (!response.ok) {
+                            return response.json().then(err => { throw err; });
+                        }
                         return response.json();
                     })
                     .then(data => {
-                        this.bookingSuccess = true; // <-- Tampilkan modal sukses
+                        this.bookingSuccess = true;
                     })
-                    .catch(error => {
+                    .catch(error =>{
                         console.error('Error:', error);
-                        alert('An error occurred. Please check the console and try again.');
                     })
                     .finally(() => {
                         this.isLoading = false;

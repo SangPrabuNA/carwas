@@ -15,4 +15,8 @@ class Schedule extends Model
         'tanggal_selesai',
         'jam_keluar',
     ];
+    protected $casts = [
+        'tanggal_masuk' => 'date',
+        'tanggal_selesai' => 'date',
+    ];  
 }
