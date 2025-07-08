@@ -21,16 +21,17 @@ class MultiStepBookingController extends Controller
 
     public function storeStep1(Request $request)
     {
-        // Validasi data dari form step 1
         $validated = $request->validate([
             'car_id' => 'required|exists:cars,id',
             'service_id' => 'required|exists:services,id',
         ]);
-        // Simpan data ke session
+
+        // Langkah ini akan MENGGANTI session lama dengan data baru dari Step 1
+        // Ini benar untuk langkah pertama.
         $request->session()->put('booking', $validated);
+
         return redirect()->route('booking.step2.create');
     }
-
     public function createStep2(Request $request)
     {
         $booking = $request->session()->get('booking');
@@ -40,18 +41,20 @@ class MultiStepBookingController extends Controller
 
     public function storeStep2(Request $request)
     {
-        // Validasi data dari form step 2
         $validated = $request->validate([
             'tanggal_masuk' => 'required|date',
             'jam_masuk' => 'required|string',
         ]);
-        // Ambil data booking yang sudah ada dari session
+
+        // Ambil data yang sudah ada dari session
         $booking = $request->session()->get('booking', []);
-        // Gabungkan data baru ke data yang sudah ada
-        $booking['tanggal_masuk'] = $validated['tanggal_masuk'];
-        $booking['jam_masuk'] = $validated['jam_masuk'];
-        // Simpan kembali data yang sudah lengkap ke session
+
+        // GABUNGKAN data baru, JANGAN TIMPA
+        $booking = array_merge($booking, $validated);
+
+        // Simpan kembali data yang sudah lengkap
         $request->session()->put('booking', $booking);
+
         return redirect()->route('booking.step3.create');
     }
 

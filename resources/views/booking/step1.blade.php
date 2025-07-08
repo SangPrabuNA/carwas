@@ -16,7 +16,7 @@
             <select name="car_id" class="block w-full max-w-md mx-auto p-3 border-gray-300 rounded-md shadow-sm">
                 <option value="">-- Select Your Vehicle --</option>
                 @foreach ($cars as $car)
-                    <option value="{{ $car->id }}" {{ (isset($bookingData['car_id']) && $bookingData['car_id'] == $car->id) ? 'selected' : '' }}>
+                    <option value="{{ $car->id }}" {{ old('car_id', $bookingData['car_id'] ?? null) == $car->id ? 'selected' : '' }}>
                         {{ $car->name }}
                     </option>
                 @endforeach

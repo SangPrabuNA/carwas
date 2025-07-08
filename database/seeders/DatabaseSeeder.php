@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(ServiceSeeder::class);
-
+        $this->call([
+        ServiceSeeder::class,
+        ScheduleSeeder::class, // <-- TAMBAHKAN INI
+        ]);
     }
 }
