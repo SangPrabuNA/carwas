@@ -57,3 +57,5 @@ Route::middleware('web')->group(function () {
         Route::resource('schedules', ScheduleController::class)->except(['create', 'store']);
     });
 });
+
+require __DIR__.'/auth.php';
