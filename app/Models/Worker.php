@@ -7,4 +7,9 @@ class Worker extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'address'];
+
+    public function schedules()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

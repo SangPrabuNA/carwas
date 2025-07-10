@@ -33,6 +33,7 @@ class Schedule extends Model
         'tanggal_selesai',
         'jam_keluar',
         'status',
+        'worker_id',
     ];
 
     /**
@@ -57,5 +58,9 @@ class Schedule extends Model
     public function service()
     {
         return $this->belongsTo(Service::class);
+    }
+    public function worker()
+    {
+        return $this->belongsTo(Worker::class);
     }
 }

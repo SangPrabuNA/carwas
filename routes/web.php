@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\WorkerController;
 use App\Http\Controllers\MultiStepBookingController;
+use App\Http\Controllers\Admin\ScheduleController;
 
 
 Route::middleware('web')->group(function () {
@@ -32,7 +33,7 @@ Route::middleware('web')->group(function () {
     // Route untuk Mobil (Dilindungi Auth)
     Route::post('/cars', [CarController::class, 'store'])->name('cars.store')->middleware('auth');
     Route::get('/cars/{car}/edit', [CarController::class, 'edit'])->name('cars.edit')->middleware('auth');
-    Route::patch('/cars/{car}', [CarController::class, 'update'])->name('cars.update')->middleware('auth'); 
+    Route::patch('/cars/{car}', [CarController::class, 'update'])->name('cars.update')->middleware('auth');
 
     Route::get('/booking/step-1', [MultiStepBookingController::class, 'createStep1'])->name('booking.step1.create')->middleware('auth');
     Route::post('/booking/step-1', [MultiStepBookingController::class, 'storeStep1'])->name('booking.step1.store')->middleware('auth');
@@ -40,6 +41,7 @@ Route::middleware('web')->group(function () {
     Route::post('/booking/step-2', [MultiStepBookingController::class, 'storeStep2'])->name('booking.step2.store')->middleware('auth');
     Route::get('/booking/step-3', [MultiStepBookingController::class, 'createStep3'])->name('booking.step3.create')->middleware('auth');
     Route::post('/booking/step-3', [MultiStepBookingController::class, 'storeStep3'])->name('booking.step3.store')->middleware('auth');
+    Route::get('/booking/{schedule}', [MultiStepBookingController::class, 'show'])->name('booking.show')->middleware('auth');
 
     // Grup Route untuk Admin
     Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -51,5 +53,7 @@ Route::middleware('web')->group(function () {
         
         Route::resource('services', ServiceController::class);
         Route::resource('workers', WorkerController::class);
+
+        Route::resource('schedules', ScheduleController::class)->except(['create', 'store']);
     });
 });

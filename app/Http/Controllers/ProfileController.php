@@ -9,13 +9,18 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
-        // Ambil user yang login, dan muat relasi 'cars'-nya secara eksplisit
-        $user = $request->user()->load('cars');
+        $user = $request->user();
 
+        // Ambil data booking milik user, urutkan dari yang terbaru
+        // dan muat relasi service & car untuk ditampilkan di view
+        $bookings = $user->schedules()->with(['service', 'car'])->latest()->get();
+
+        // Kirim data user dan booking ke view
         return view('profile.edit', [
             'user' => $user,
+            'bookings' => $bookings,
         ]);
     }
 

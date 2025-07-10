@@ -127,9 +127,59 @@
                         <p class="text-center text-gray-500 py-4">You haven't added any cars yet.</p>
                     @endforelse
                 </div>
+            <div class="mt-8 ">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">My Bookings</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="p-3">Service</th>
+                                    <th class="p-3">Vehicle</th>
+                                    <th class="p-3">Schedule</th>
+                                    <th class="p-3">Status</th>
+                                    <th class="p-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($bookings as $booking)
+                                    <tr class="border-b hover:bg-gray-50">
+                                        <td class="p-3 font-medium">{{ $booking->service?->name ?? 'N/A' }}</td>
+                                        <td class="p-3">{{ $booking->car?->name ?? 'N/A' }}</td>
+                                        <td class="p-3">
+                                            {{ $booking->tanggal_masuk->format('d M Y') }}
+                                            <span class="text-gray-500">{{ date('H:i', strtotime($booking->jam_masuk)) }}</span>
+                                        </td>
+                                        <td class="p-3">
+                                            <a href="{{ route('booking.show', $booking) }}" class="bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600">
+                                                Detail
+                                            </a>
+                                        </td>
+                                        <td class="p-3">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                                @if($booking->status == 'Pending') bg-yellow-100 text-yellow-800 @endif
+                                                @if($booking->status == 'Confirmed') bg-blue-100 text-blue-800 @endif
+                                                @if($booking->status == 'Finished') bg-green-100 text-green-800 @endif
+                                                @if($booking->status == 'Canceled') bg-red-100 text-red-800 @endif
+                                            ">
+                                                {{ $booking->status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="text-center p-4 text-gray-500">You have no booking history.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
             </div>
         </main>
     </div>
+    
     
     <div x-show="addCarModalOpen" x-transition class="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" x-cloak>
         <div @click.outside="addCarModalOpen = false" class="bg-white w-full max-w-lg p-8 rounded-lg">
