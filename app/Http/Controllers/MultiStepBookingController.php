@@ -49,6 +49,9 @@ class MultiStepBookingController extends Controller
             return date('H:i', strtotime($time));
         })->toArray();
 
+        $allSchedules = Schedule::where('tanggal_masuk', '>=', now()->toDateString())
+                                  ->get(['tanggal_masuk', 'jam_masuk']);
+
         // Daftar slot waktu yang tersedia
         $timeSlots = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 

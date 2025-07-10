@@ -62,14 +62,16 @@
                             @endphp
                             <div class="relative">
                                 <input type="radio" name="jam_masuk" id="time-{{ $time }}" value="{{ $time }}" 
-                                       class="peer sr-only" required 
-                                       {{ $isBooked ? 'disabled' : '' }}
-                                       {{ (isset($booking['jam_masuk']) && $booking['jam_masuk'] == $time) ? 'checked' : '' }}>
-                                <label for="time-{{ $time }}" 
-                                       class="block p-3 border rounded-lg text-center transition-all 
-                                              {{ $isBooked 
-                                                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                                                  : 'cursor-pointer peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600' }}">
+                                    class="peer sr-only" required 
+                                    {{ $isBooked ? 'disabled' : '' }}
+                                    {{ (isset($booking['jam_masuk']) && $booking['jam_masuk'] == $time) ? 'checked' : '' }}>
+                                
+                                <label for="time-{{ $time }}"
+                                    @click="if ({{ $isBooked ? 'true' : 'false' }}) { alert('Jadwal pada jam ini sudah terisi. Silakan pilih waktu lain.'); }"
+                                    class="block p-3 border rounded-lg text-center transition-all 
+                                            {{ $isBooked 
+                                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
+                                                : 'cursor-pointer peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600' }}">
                                     {{ $time }}
                                 </label>
                             </div>
@@ -98,6 +100,8 @@
             months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             selectedDate: null,
             selectedDate_formatted: initialDate || '',
+
+            dayFullMessage: '',
 
             init() {
                 if (this.selectedDate_formatted) {
