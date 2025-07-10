@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('services', function (Blueprint $table) {
-            // Menambahkan kolom description setelah kolom name
             $table->text('description')->nullable()->after('name');
+            $table->string('image')->nullable()->after('description');
         });
     }
+
     /**
      * Reverse the migrations.
      */
